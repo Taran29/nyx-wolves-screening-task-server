@@ -2,10 +2,10 @@ import Joi from "joi";
 import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema({
-  name: {
+  email: {
     type: String,
     required: true,
-    minlength: 1,
+    minlength: 5,
     maxlength: 50
   },
   records: {
@@ -24,7 +24,7 @@ const User = mongoose.model('user', UserSchema)
 
 const validateUser = (user) => {
   const schema = Joi.object({
-    name: Joi.string().required().min(1).max(50)
+    email: Joi.string().email().min(5).max(50).required()
   })
 
   return schema.validate(user, { allowUnknown: true })
