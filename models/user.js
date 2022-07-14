@@ -39,7 +39,7 @@ const validateUser = (user) => {
 const validateRecord = (record) => {
   const schema = Joi.object({
     name: Joi.string().required().min(1).max(50),
-    description: Joi.string().required().min(1).max(100),
+    description: Joi.string().required().min(1).max(200),
   })
 
   return schema.validate(record, { allowUnknown: true })

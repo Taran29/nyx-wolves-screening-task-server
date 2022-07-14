@@ -10,6 +10,7 @@ import {
   addRecord,
   getRecords,
   getRecordInfo,
+  editRecord,
   deleteRecords,
 } from './controllers/records.js'
 
@@ -37,6 +38,7 @@ io.on('connection', (socket) => {
   socket.on("create", (record, callback) => { addRecord(record, callback) })
   socket.on("fetchAll", (email, callback) => { getRecords(email, callback) })
   socket.on("fetchOne", (recordID, userEmail, callback) => { getRecordInfo(recordID, userEmail, callback) })
+  socket.on("editRecord", (recordID, updatedRecord, userEmail, callback) => { editRecord(recordID, updatedRecord, userEmail, callback) })
   socket.on("delete", (recordID, userEmail, callback) => { deleteRecords({ socket, recordID, userEmail, callback }) })
 })
 io.listen(5001)
