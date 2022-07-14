@@ -39,6 +39,11 @@ const io = new Server(server, {
   }
 })
 
+io.configure(function () {
+  io.set("transports", ["xhr-polling"]);
+  io.set("polling duration", 10);
+});
+
 io.on('connection', (socket) => {
   socket.on("create", (record, callback) => { addRecord(record, callback) })
   socket.on("fetchAll", (email, callback) => { getRecords(email, callback) })
