@@ -4,7 +4,6 @@ import { config } from 'dotenv'
 import cors from 'cors'
 import register from './routes/users.js'
 import { Server } from 'socket.io'
-import http from 'http'
 
 import {
   addRecord,
@@ -17,13 +16,13 @@ import {
 config()
 
 const app = express()
-const io = new Server(http.Server(app), {
-  cors: {
-    origin: '*'
-  }
+
+const port = process.env.PORT || 3000
+let server = app.listen(port, () => {
+  console.log(`Listening on port ${port}`)
 })
+
 app.use(express.json())
-app.use(express.static('uploads'))
 app.options('*', cors())
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -34,6 +33,12 @@ app.use(function (req, res, next) {
 
 app.use('/api/register', register)
 
+const io = new Server(server, {
+  cors: {
+    origin: '*'
+  }
+})
+
 io.on('connection', (socket) => {
   socket.on("create", (record, callback) => { addRecord(record, callback) })
   socket.on("fetchAll", (email, callback) => { getRecords(email, callback) })
@@ -41,7 +46,6 @@ io.on('connection', (socket) => {
   socket.on("editRecord", (recordID, updatedRecord, userEmail, callback) => { editRecord(recordID, updatedRecord, userEmail, callback) })
   socket.on("delete", (recordID, userEmail, callback) => { deleteRecords({ socket, recordID, userEmail, callback }) })
 })
-io.listen(5001)
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
@@ -49,9 +53,3 @@ mongoose.connect(process.env.MONGODB_URI)
   }).catch((err) => {
     console.error(err)
   })
-
-const port = process.env.PORT || 3000
-
-app.listen(port, () => {
-  console.log(`Listening on port ${port}`)
-})
