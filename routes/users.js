@@ -4,7 +4,6 @@ import { User, validateUser } from '../models/user.js'
 const router = express.Router()
 
 router.post('/', async (req, res) => {
-
   const existingUser = await User.findOne({ email: req.body.email })
   if (existingUser) {
     return res.status(200).send({
